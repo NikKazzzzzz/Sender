@@ -1,21 +1,22 @@
-FROM golang:1.22 as builder
+# Dockerfile for Sender
 
+# Use a Golang base image
+FROM golang:1.20-alpine
+
+# Set the working directory
 WORKDIR /app
 
+# Copy the go.mod and go.sum files
 COPY go.mod go.sum ./
 
-RUN go mod tidy
+# Download dependencies
+RUN go mod download
 
-COPY cmd/ .
-COPY config/sender.yaml ./config/sender.yaml
+# Copy the source code
+COPY . .
 
-RUN go mod tidy
-RUN go build -o sender
+# Build the application
+RUN go build -o sender cmd/sender/main.go
 
-FROM alpine:3.18
-
-WORKDIR /app
-COPY --from=builder /app/sender .
-COPY --from=builder /app/config/sender.yaml ./config/sender.yaml
-
+# Command to run the application
 CMD ["./sender"]
