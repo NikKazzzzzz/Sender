@@ -3,6 +3,7 @@ package notification
 import (
 	"crypto/tls"
 	"fmt"
+	"github.com/NikKazzzzzz/Sender/monitoring"
 	"log"
 	"net/smtp"
 )
@@ -80,4 +81,6 @@ func (service *NotificationService) SendNotification(event string) {
 	}
 
 	log.Printf("Email sent successfully to %s", service.emailConfig.RecipientEmail)
+
+	monitoring.SentMessagesCounter.Inc()
 }

@@ -40,7 +40,7 @@ func (c *Consumer) Consume(handler func(string)) error {
 	msgs, err := c.Channel.Consume(
 		c.Queue,
 		"",
-		true,
+		false,
 		false,
 		false,
 		false,
@@ -56,6 +56,10 @@ func (c *Consumer) Consume(handler func(string)) error {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
 			handler(string(d.Body))
+
+			if err := d.Ack(false); err != nil {
+				log.Printf("Failed to acknowledge message: %v", err)
+			}
 		}
 	}()
 

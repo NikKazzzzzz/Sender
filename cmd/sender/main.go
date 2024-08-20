@@ -5,7 +5,9 @@ import (
 	"github.com/NikKazzzzzz/Sender/internal/notification"
 	"github.com/NikKazzzzzz/Sender/internal/rabbitmq"
 	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
+	"net/http"
 )
 
 func main() {
@@ -35,4 +37,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to consume messages: %v", err)
 	}
+
+	http.Handle("/metrics", promhttp.Handler())
+	go func() {
+		log.Println("Starting Prometheus metrics server on: 2112")
+		if err := http.ListenAndServe(":2112", nil); err != nil {
+			log.Fatalf("failed to start Prometheus metrics server: %v", err)
+		}
+	}()
 }

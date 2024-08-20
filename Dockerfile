@@ -17,4 +17,4 @@ WORKDIR /app
 
 COPY --from=builder /app/Sender .
 
-CMD ["./Sender"]
+CMD ["sh", "-c", "sleep 20 && ./Sender"]
